@@ -1,0 +1,40 @@
+.post-container{
+	margin: 2rem 2rem 0 2rem;
+	max-width: 600px;
+	border: 1px solid lightgrey;
+	background: white;
+	border-radius: 0.2rem;
+}
+
+.post-header{
+	display: flex;
+	align-items: center; 
+	padding: 0.5rem;
+	border-bottom: 1px solid lightgrey; 
+}
+
+.post-header h4{
+	margin-left: 0.6rem;
+}
+
+.Avtr{
+ 	padding: 0;
+}
+
+
+.post-img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	padding: 0;
+	border-bottom: 1px solid lightgrey;
+}
+
+.post-footer{
+	text-align: left; 
+	padding: 0.8rem; 
+}
+
+.post-footer strong{
+	padding-right: 0.5rem;
+}

@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Satisfy&display=swap");
+
+.nav-container{
+	width:100vw;
+	height: 3rem;
+	background-color: white;
+	border-bottom: 1px solid lightgrey;
+	display: flex;
+	grid-template-columns: 1fr 1fr;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100;
+}
+
+.nav-img{
+	padding: 0.25rem 0; 
+	max-width: 150px;
+	height: inherit; 
+}
+
+img{
+	padding-left: 1.2rem;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.icon_css{
+	/*color: black;*/
+	font-size: 1.8rem;
+}
+
+.new_post_btn{
+	margin-top: 0.8rem;
+	background: transparent;
+	border: 1px solid transparent;
+	/*height: 1.5rem;*/
+	cursor: pointer;
+	padding: 0.1rem;
+	padding-right: 0.8rem;
+}
+
+.icons_block {
+	display: flex;
+	/*background-color: pink;*/
+}
+
+h3{
+	font-family: 'Satisfy', cursive;
+}

@@ -1,0 +1,42 @@
+.overlay{
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: hsl(205, 90%, 76%,50%);
+  top: 0;
+  left: 0;
+  z-index:0;
+}
+
+.overlay-container{
+  background: white;
+  padding: 2rem 4rem;
+  border-radius: 0.8rem;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1rem;
+  background: transparent;
+  border-color: transparent;
+  color: hsl(360, 67%, 44%);
+  cursor: pointer;
+}
+
+.overlay{
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.open-overlay{
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+}

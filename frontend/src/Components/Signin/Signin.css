@@ -1,0 +1,99 @@
+.signin-container{
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.signin-center{
+	max-width: 400px;
+	border: 1px solid lightgrey;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background: white;
+}
+
+.logo-img{
+	/*background: violet;*/
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	margin: 0 auto;
+	margin-bottom: 1rem;
+	width: 100%;
+	height: 50px;
+	margin-top: 1.5rem; 
+}
+
+.logo-img img{
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.signin-forms{
+	/*background: pink;*/
+	width: 100%;
+}
+
+.inputblk{
+	width: 260px;
+	height: 35px;
+	border-radius: 0.2rem;
+	border:1px solid #D8D8D8;
+	margin: 0.2rem 2rem;
+	background-color: #F0F0F0;
+	padding-left: 0.3rem;
+}
+
+.input-btn{
+	width: 260px;
+	height: 35px;
+	border-radius: 0.2rem;
+	border:1px solid #66CCFF;
+	margin: 0.8rem 2rem;
+	margin-bottom: 3rem;
+	/*#0099FF*/
+	background-color: #66CCFF;
+	color: white;
+	cursor: pointer;
+}
+
+.login-pblm{
+	margin-bottom: 0.8rem;
+	font-size: 0.8rem;
+	color: red;
+	display: none;
+}
+
+.active{
+	display: block;
+}
+
+.second-option-blk{
+	max-width: 400px;
+	border: 1px solid lightgrey;
+	margin-top: 0.9rem;
+	padding: 1.1rem 5rem;
+	background: white;
+	display: flex;
+	justify-content: center;
+}
+
+.second-option-blk p{
+	width: 400px;
+	font-size: 1rem;
+}
+
+.second-option-btn{
+	text-decoration: none;
+	font-weight: bold;
+	color: #3399FF;
+}
+
+.show{
+	background: #0099FF;
+}
