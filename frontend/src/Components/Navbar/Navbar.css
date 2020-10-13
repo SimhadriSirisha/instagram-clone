@@ -1,16 +1,27 @@
-@import url("https://fonts.googleapis.com/css2?family=Satisfy&display=swap");
-
 .nav-container{
 	width:100vw;
 	height: 3rem;
+	text-align: center;
 	background-color: white;
 	border-bottom: 1px solid lightgrey;
-	display: flex;
-	grid-template-columns: 1fr 1fr;
 	position: fixed;
 	top: 0;
 	left: 0;
 	z-index: 100;
+}
+
+.nav-section{
+	margin: 0 auto;
+	height: inherit;
+	width: 80%;
+	display: flex;
+	justify-content: space-between;
+}
+
+@media only screen and (min-width: 750px){
+	.nav-section{
+		width: 80%;
+	}
 }
 
 .nav-img{
@@ -26,26 +37,28 @@ img{
 	object-fit: contain;
 }
 
+.icons_block{
+	display: flex;
+	align-items: center;
+}
+
 .icon_css{
-	/*color: black;*/
 	font-size: 1.8rem;
 }
 
-.new_post_btn{
+.icon_btn{
 	margin-top: 0.8rem;
 	background: transparent;
 	border: 1px solid transparent;
-	/*height: 1.5rem;*/
 	cursor: pointer;
-	padding: 0.1rem;
-	padding-right: 0.8rem;
+	margin-right: 0.8rem;
 }
 
 .icons_block {
 	display: flex;
-	/*background-color: pink;*/
 }
 
-h3{
-	font-family: 'Satisfy', cursive;
+.profile{
+	display: flex;
+	align-items: center;
 }

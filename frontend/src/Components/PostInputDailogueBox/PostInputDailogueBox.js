@@ -54,7 +54,8 @@ const PostInputDailogueBox = ({user_id, loadPost}) =>{
 
   const closeUpload = () =>{
         setClick(false);
-        history.push('/home');
+        // history.push('/home');
+        history.goBack();
   }
 
   const onSubmitUpload = (e) =>{

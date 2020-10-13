@@ -1,0 +1,54 @@
+.edit_container{
+	margin-top: 5rem;
+	width: 70%;
+	background-color: white;
+}
+
+.intro_blk{
+	width: 70%;
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+}
+
+.edit_top_block {
+	width:60px;
+	height: 60px;
+	border-radius: 50%;
+}
+
+.edit_top_block{
+	justify-self: center;
+}
+
+.ugridcss{
+	justify-self: start;
+}
+
+.edit-form{
+	width: 70%;
+	margin: 0 auto;
+}
+
+.ip_cont{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	margin: 0 0 1rem 0;
+}
+
+.ip_css{
+	justify-self: start;
+	width: 260px;
+	height: 35px;
+	border-radius: 0.2rem;
+	border:1px solid #D8D8D8;
+	margin: 0.2rem 0;
+	background-color: white;
+	padding-left: 0.3rem;
+}
+
+label{
+	font-weight: bold;
+}

@@ -60,8 +60,9 @@ app.post('/signup',(req,res)=>{
 		password:hash
    	})
 	.into('users')
-	.returning(['name','username','no_of_posts','followers','following'])
+	.returning('*')
 	.then(user => {
+		user.password = undefined;
 		res.json(user[0]);
 		console.log(user[0]);
 	})
@@ -102,6 +103,36 @@ app.get('/allPost',(req,res)=>{
 			res.json(posts);
 		})
 		.catch(err => res.status(400).json('unable to fetch'));
+})
+
+app.get('/profile/:id',(req,res)=>{
+	const {id} = req.params;
+	db('post_details')
+		.join('users','post_details.userid','=','users.id')
+		.select(['post_details.id','post_details.caption','post_details.imageurl','users.username','post_details.userid'])
+	  	.where('userid','=',id)
+	  	.then(data => {
+	  		res.json(data);
+	 	})
+	  	.catch(err => res.status(400).json('unable to fetch'));
+})
+
+app.post('/editProfile',(req,res)=>{
+	const {id, name, bio, pn, email, username} = req.body;
+	db('users').where('id','=',id)
+		.update({
+			id,
+			name,
+			bio,
+			mobile: pn,
+			username,
+			email
+		})
+		.returning('*')
+		.then(data =>{
+			res.json(data[0]);
+		})
+		.catch(err => res.status(400).json('unable to update the profile'))
 })
 
 app.listen(3001,()=>{

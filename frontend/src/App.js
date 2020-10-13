@@ -2,6 +2,8 @@ import React,{useState, useEffect} from 'react';
 import './App.css';
 import Navbar from './Components/Navbar/Navbar';
 import Posts from './Components/Posts/Posts';
+import Edit_Profile from './Components/Edit_Profile/Edit_Profile';
+import Profile from './Components/Profile/Profile';
 import PostInputDailogueBox from './Components/PostInputDailogueBox/PostInputDailogueBox';
 import Signin from './Components/Signin/Signin';
 import Signup from './Components/Signup/Signup';
@@ -9,11 +11,15 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 const App = (props) =>{
   const [user,setUser] = useState({
-    user_id:'',
+    user_id: 0,
+    email:'xyz@xyz.com',
+    mobile:'999',
     username:'xxx',
     no_of_posts:0,
     followers:0,
-    following:0
+    following:0,
+    name:'xxx',
+    bio:'yzaaa'
   });
   const [postDetails, setPostDetails] = useState([]);
 
@@ -35,15 +41,32 @@ const App = (props) =>{
   }
 
   const loadUser = (res_user) =>{
-    const {id,username, no_of_posts, followers, following} = res_user;
+    const {id, name, username, mobile, no_of_posts, followers, following, bio, email} = res_user;
     setUser({
         user_id: id,
         username,
+        mobile,
         no_of_posts,
         followers,
-        following
+        following,
+        name,
+        bio,
+        email
       })
-      console.log(user);
+      console.log('loaded user',user);
+  }
+
+  const loadEditedUser = (res_user) =>{
+    const {id, name, username, mobile, bio, email} = res_user;
+    setUser({
+        user_id: id,
+        username,
+        mobile,
+        name,
+        bio,
+        email
+      })
+      console.log('loaded user',user);
   }
 
   return (
@@ -59,12 +82,20 @@ const App = (props) =>{
             <Signup loadUser = {loadUser}/>
           </Route>
           <Route exact path="/home">
-            <Navbar username={user.username}/>
+            <Navbar username={user.username}
+                    user_id = {user.user_id}/>
             <Posts postDetails = {postDetails}/>
           </Route>
-          <Route exact path="/profile">
-            <Navbar username={user.username}/>
-
+          <Route exact path="/profile/:id">
+            <Navbar username={user.username}
+                    user_id = {user.user_id}/>
+            <Profile user = {user}/>
+          </Route>
+          <Route exact path="/edit_profile">
+            <Navbar username={user.username}
+                    user_id = {user.user_id}/>
+            <Edit_Profile user = {user}
+                          loadEditedUser = {loadEditedUser}/>
           </Route>
           <Route exact path="/upload">
             <PostInputDailogueBox 

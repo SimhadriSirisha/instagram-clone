@@ -43,9 +43,24 @@ const Signup = (props) =>{
     }
   }
 
+  const onUsernameChange = (e) => {
+    const val = e.target.value;
+    for (var i = 0; i < val.length; i++) {
+      if(val[i]===' '){
+        break;
+      }
+    }
+    if(i === val.length){
+      setUsername(val)
+    }
+    else{
+      setUsername('');
+    }
+  }
+
   const onSubmitSignup = (event) => {
     event.preventDefault();
-    if(mobile === '' || Email === '' || password.length < 6){
+    if(mobile === '' || Email === '' || password.length < 6 || username === ''){
       setError("error");
     }
     else{
@@ -64,6 +79,7 @@ const Signup = (props) =>{
         })
         .then(res => res.json())
         .then(user => {
+          console.log(user);
           if(user.id){
             console.log("successs");
             props.loadUser(user);
@@ -87,7 +103,7 @@ const Signup = (props) =>{
           </div>
           <p className="top-para">Sign up to see photos and videos from your friends.</p>
           <form className="signup-forms" onSubmit={onSubmitSignup}>
-            <p className="red" id="error">Unable to register (check all fields like password must have atleast 6 characters, unique username, correct mobile number & email) </p>
+            <p className="red" id="error">Unable to register (check all fields like password must have atleast 6 characters, unique username & username should be of one word, correct mobile number & email) </p>
             <input className="inputblk" 
                    placeholder=" Email" 
                    type="text"
@@ -103,7 +119,7 @@ const Signup = (props) =>{
             <input className="inputblk" 
                    placeholder=" Username" 
                    type="text"
-                   onChange = {e => setUsername(e.target.value)}/><br/>
+                   onChange = {onUsernameChange}/><br/>
             <input className="inputblk"
                    placeholder=" Password"
                    type="password"
