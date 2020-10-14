@@ -24,11 +24,11 @@ const App = (props) =>{
   const [postDetails, setPostDetails] = useState([]);
 
   useEffect(()=>{
+    console.log('inuseeffect',postDetails)
     fetch('http://localhost:3001/allPost')
     .then((res)=>res.json())
     .then((data)=>{
       setPostDetails(data)
-      console.log('inuseeffect',postDetails)
     });
   },[])
 
