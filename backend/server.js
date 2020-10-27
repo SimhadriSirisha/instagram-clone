@@ -19,6 +19,24 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+db.schema.hasTable('comments').then((exists) => {
+  if (!exists) {
+  	console.log("not present");
+    return db.schema.createTable('comments', (t) => {
+      t.increments('id').primary();
+      t.integer('parent_id').defaultTo(0);
+      t.text('comment').notNullable();
+      t.integer('userid').notNullable();
+      t.integer('postid').notNullable();
+      t.timestamp('createdAt');
+      t.foreign('postid').references('postid').inTable('post_details')
+      	.onUpdate('CASCADE')
+      	.onDelete('CASCADE');
+    });
+  }
+});
+
+
 app.post('/signin',(req,res)=>{
 	// we need to body parse as we are getting json as info
 	// thats y we require body parser and to use body parser
@@ -69,6 +87,7 @@ app.post('/signup',(req,res)=>{
 	.catch(err => {res.status(400).json('unable to register')});
 })
 
+//change it to transaction type
 app.post('/upload',(req,res)=>{
 	const {user_id, caption, imageUrl} = req.body;
 	// console.log(user_id,caption,imageUrl);
@@ -93,11 +112,10 @@ app.post('/upload',(req,res)=>{
 			.catch(err => res.status(400).json('unable to increment'));
 })
 
-
 app.get('/allPost',(req,res)=>{
 	db('post_details')
 		.join('users','post_details.userid','=','users.id')
-		.select(['post_details.id','post_details.caption','post_details.imageurl','users.username'])
+		.select(['post_details.id','post_details.caption','post_details.imageurl','users.username','post_details.likes'])
 		.orderBy('post_details.post_time','desc')
 		.then(posts => {
 			res.json(posts);
@@ -109,7 +127,7 @@ app.get('/profile/:id',(req,res)=>{
 	const {id} = req.params;
 	db('post_details')
 		.join('users','post_details.userid','=','users.id')
-		.select(['post_details.id','post_details.caption','post_details.imageurl','users.username','post_details.userid'])
+		.select(['post_details.id','post_details.caption','post_details.imageurl','users.username','post_details.userid','post_details.likes'])
 	  	.where('userid','=',id)
 	  	.then(data => {
 	  		res.json(data);
@@ -133,6 +151,100 @@ app.post('/editProfile',(req,res)=>{
 			res.json(data[0]);
 		})
 		.catch(err => res.status(400).json('unable to update the profile'))
+})
+
+app.put('/likes',(req,res)=>{
+	const {userid,postid} = req.body;
+	db.transaction(trx=>{
+		trx('likes').select('*').where({
+			postid,
+			userid
+		})
+		.then(data => {
+			console.log('data',data);
+			if(data.length){
+				console.log("user already liked the post");
+				return trx('post_details').select('likes')
+							.where('id','=',data[0].postid)
+							.then(likes => {
+								res.json(likes[0].likes);
+							})
+							.catch(err => res.status(400).json('unable to likes data'));
+			}
+			else{
+				return trx.insert({
+					postid,
+					userid
+				}).into('likes')
+				.returning('postid')
+				.then(postId =>{
+					console.log('postid',postId);
+					return trx('post_details')
+								.where('id','=',postId[0])
+								.increment('likes')
+								.returning('likes')
+								.then(likes => {
+									res.json(likes[0]);
+								})
+								.catch(err => res.status(400).json('unable to update'));
+				})
+				.then(trx.commit)
+				.catch(trx.rollback)
+			}
+		})
+		.catch(err => res.status(400).json('unable to get likes table data'));
+	})
+})
+
+app.put('/unlike',(req,res)=>{
+	const {postid} = req.body;
+	db.transaction(trx => {
+		trx('post_details').where('id','=',postid)
+			.decrement('likes')
+			.returning(['userid','likes'])
+			.then(data => {
+				return trx('likes').where({
+					'userid':data[0].userid,
+					postid
+				}).del()
+				.then(res.json(data[0].likes))
+				.then(trx.commit)
+				.catch(trx.rollback)
+			})
+			.catch(err => res.status(400).json('no post present'))
+	})
+})
+
+app.put('/comment',(req,res)=>{
+	const {comment,userid,postid} = req.body;
+	console.log(req.body);
+	db('comments').insert({
+		comment,
+		userid,
+		postid,
+		createdAt : new Date()
+	}).returning('*')
+	.then(data =>{
+		console.log('in /comment',data);
+		res.json(data[0])
+	})
+	.catch(err => res.status(400).json("can't insert"));
+})
+
+app.get('/allComment/:postid',(req,res)=>{
+	const postid = req.params;
+
+	db('comments AS c')
+  		.join('post_details AS p', (joinBuilder) => {
+    		return joinBuilder.on('p.id', '=', 'c.postid').andOn('c.postid', '=', db.raw('?', [postid]));
+  	})
+  	.join('users AS u', 'u.id', '=', 'c.userid')
+  	.select(['c.id', 'c.parent_id', 'c.comment', 'u.username', 'c.postid', 'c.userid'])
+  	.then((data) => {
+ 	   	console.log(data);
+    	res.json(data);
+  	})
+  	.catch(console.log);
 })
 
 app.listen(3001,()=>{

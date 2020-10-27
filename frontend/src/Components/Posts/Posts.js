@@ -1,7 +1,7 @@
 import React from 'react';
 import Post from '../Post/Post';
 
-const Posts = ({postDetails}) =>{
+const Posts = ({postDetails,loadLikes,userid}) =>{
   console.log(postDetails);
 	return(
 		<div>
@@ -10,9 +10,13 @@ const Posts = ({postDetails}) =>{
                 return(
                     <Post 
                        key = {post.id} 
+                       id = {post.id}
                        username = {post.username} 
                        imageUrl = {post.imageurl}
                        caption = {post.caption}
+                       likes = {post.likes}
+                       loadLikes = {loadLikes}
+                       userid = {userid}
                     />
                 );      
             })

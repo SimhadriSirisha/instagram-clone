@@ -8,13 +8,37 @@
 
 .post-header{
 	display: flex;
-	align-items: center; 
+	align-items: center;
+	justify-content: space-between; 
 	padding: 0.5rem;
 	border-bottom: 1px solid lightgrey; 
 }
 
 .post-header h4{
 	margin-left: 0.6rem;
+}
+
+.left-post-header{
+	display: flex;
+	align-items: center;
+}
+
+.del-button{
+	background: transparent;
+	padding: 0 1rem 0 1rem;
+	height: 2rem;
+	border: 1px solid grey;
+	border-radius: 0.5rem;
+	font-size: 0.8rem;
+	cursor:pointer;
+}
+
+.right-post-header{
+	display: none;
+}
+
+.show-right-post-header{
+	display: block;
 }
 
 .Avtr{
@@ -30,6 +54,17 @@
 	border-bottom: 1px solid lightgrey;
 }
 
+.post_icons_set{
+	display: flex;
+}
+
+.post_icon_btn{
+	background: transparent;
+	border-color: transparent;
+	cursor: pointer;
+	outline: transparent;
+}
+
 .post-footer{
 	text-align: left; 
 	padding: 0.8rem; 
@@ -37,4 +72,31 @@
 
 .post-footer strong{
 	padding-right: 0.5rem;
+}
+
+.comment-ip{
+	width: 90%;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	border-top: 1px solid lightgrey;
+	border-right: none;
+	border-left: none;
+	border-bottom: none; 
+	outline: transparent;
+	padding:0.5rem 0 0 0.3rem;
+}
+
+.post-btn{
+	width: 10%;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	background: transparent;
+	color: #0099FF;
+	font-weight: bold;
+	border-top: 1px solid lightgrey;
+	border-right: none;
+	border-left: none;
+	border-bottom: none;
+	outline: transparent;
+	cursor: pointer;
 }

@@ -4,7 +4,7 @@ import Navbar from './Components/Navbar/Navbar';
 import Posts from './Components/Posts/Posts';
 import Edit_Profile from './Components/Edit_Profile/Edit_Profile';
 import Profile from './Components/Profile/Profile';
-import PostInputDailogueBox from './Components/PostInputDailogueBox/PostInputDailogueBox';
+import DailogueBox from './Components/DailogueBox/DailogueBox';
 import Signin from './Components/Signin/Signin';
 import Signup from './Components/Signup/Signup';
 import { Route, Switch, Redirect } from 'react-router-dom';
@@ -28,6 +28,7 @@ const App = (props) =>{
     fetch('http://localhost:3001/allPost')
     .then((res)=>res.json())
     .then((data)=>{
+      console.log("in allPost",data);
       setPostDetails(data)
     });
   },[])
@@ -69,6 +70,18 @@ const App = (props) =>{
       console.log('loaded user',user);
   }
 
+  const loadLikes = (data) =>{
+    console.log("likes data",data);
+    const p = postDetails;
+    p.forEach((post) =>{
+      if(post.id === data.id){
+        post.likes = data.likes;
+      }
+    })
+    console.log(p);
+    setPostDetails(p);
+  }
+
   return (
       <div className="App">
         <Switch>
@@ -84,7 +97,9 @@ const App = (props) =>{
           <Route exact path="/home">
             <Navbar username={user.username}
                     user_id = {user.user_id}/>
-            <Posts postDetails = {postDetails}/>
+            <Posts postDetails = {postDetails}
+                   loadLikes = {loadLikes}
+                   userid = {user.user_id}/>
           </Route>
           <Route exact path="/profile/:id">
             <Navbar username={user.username}
@@ -97,10 +112,11 @@ const App = (props) =>{
             <Edit_Profile user = {user}
                           loadEditedUser = {loadEditedUser}/>
           </Route>
-          <Route exact path="/upload">
-            <PostInputDailogueBox 
+          <Route path="/box">
+            <DailogueBox 
                  user_id = {user.user_id}
-                 loadPost = {loadPost} />
+                 loadPost = {loadPost} 
+                 loadLikes = {loadLikes}/>
           </Route>
         </Switch>
       </div>

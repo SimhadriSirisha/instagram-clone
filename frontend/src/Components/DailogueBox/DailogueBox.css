@@ -5,7 +5,8 @@
   align-items: center;
   width: 100vw;
   height: 100vh;
-  background-color: hsl(205, 90%, 76%,50%);
+  /*background-color: hsl(205, 90%, 76%,50%);*/
+  background-color:lightgrey;
   top: 0;
   left: 0;
   z-index:0;
@@ -15,7 +16,8 @@
   background: white;
   padding: 2rem 4rem;
   border-radius: 0.8rem;
-  position: relative;
+  position: absolute;
+  /*left: 0;*/
 }
 
 .close-btn {
@@ -27,6 +29,7 @@
   border-color: transparent;
   color: hsl(360, 67%, 44%);
   cursor: pointer;
+  outline: transparent;
 }
 
 .overlay{
@@ -35,8 +38,26 @@
   overflow: hidden;
 }
 
+.uploading_data{
+  display: none;
+}
+
+.show_post{
+  display: none;
+}
+
+.showBlock{
+  /*padding-top: 2rem;*/
+  display: block;
+}
+
+.post-overlay-container{
+    top: 0;
+}
+
 .open-overlay{
   width: 100vw;
   height: 100vh;
   z-index: 2000;
+  overflow-y: scroll;
 }

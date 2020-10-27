@@ -26,6 +26,13 @@ const Profile = ({user}) =>{
 		});
 	}
 
+	const showPost = (post) => {
+		history.push({
+			pathname:'/box/showPost',
+			state:{post:post}
+		})
+	}
+
 	return(
 		<div className='p_container'>
 			<div className="top_block">
@@ -55,8 +62,8 @@ const Profile = ({user}) =>{
 								{
 									userPosts.map((post,idx)=>{
 										return(
-											<div className="smallPost">
-												<img className='smallPost_pic' alt='post_img' src={post.imageurl}/>
+											<div className="smallPost" key={post.id}>
+												<img className='smallPost_pic' alt='post_img' src={post.imageurl} onClick={()=>showPost(post)}/>
 											</div>
 										)
 									})

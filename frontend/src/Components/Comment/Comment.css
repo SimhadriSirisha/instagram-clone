@@ -1,0 +1,30 @@
+.comment-block{
+	display: flex;
+	align-items: center;
+	margin-top: 0.5rem;
+}
+
+.cmt-username{
+	padding-right: 0.5rem;
+}
+
+.parent-comment-blk{
+	display: flex;
+}
+
+.cmmnt{
+	padding-right: 0.5rem;
+}
+
+.reply-btn{
+	background: transparent;
+	color: #0099FF;
+	font-weight: bold;
+	border:none;
+	outline: transparent;
+	cursor: pointer;
+}
+
+.reply-comment{
+	padding-left: 1rem;
+}
