@@ -73,30 +73,3 @@
 .post-footer strong{
 	padding-right: 0.5rem;
 }
-
-.comment-ip{
-	width: 90%;
-	padding-top: 0.5rem;
-	padding-bottom: 0.5rem;
-	border-top: 1px solid lightgrey;
-	border-right: none;
-	border-left: none;
-	border-bottom: none; 
-	outline: transparent;
-	padding:0.5rem 0 0 0.3rem;
-}
-
-.post-btn{
-	width: 10%;
-	padding-top: 0.5rem;
-	padding-bottom: 0.5rem;
-	background: transparent;
-	color: #0099FF;
-	font-weight: bold;
-	border-top: 1px solid lightgrey;
-	border-right: none;
-	border-left: none;
-	border-bottom: none;
-	outline: transparent;
-	cursor: pointer;
-}

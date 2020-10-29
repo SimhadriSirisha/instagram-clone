@@ -216,24 +216,31 @@ app.put('/unlike',(req,res)=>{
 })
 
 app.put('/comment',(req,res)=>{
-	const {comment,userid,postid} = req.body;
+	const {comment,userid,postid,parent_id} = req.body;
 	console.log(req.body);
-	db('comments').insert({
-		comment,
-		userid,
-		postid,
-		createdAt : new Date()
-	}).returning('*')
-	.then(data =>{
-		console.log('in /comment',data);
-		res.json(data[0])
-	})
-	.catch(err => res.status(400).json("can't insert"));
+	db('users').where('id','=',userid)
+		.select('username')
+		.then(uname => {
+			console.log('uname',uname);
+			return db('comments').insert({
+						comment,
+						userid,
+						postid,
+						parent_id,
+						createdAt : new Date()
+				}).returning('*')
+				.then(data =>{
+					data[0] = {...data[0],...uname[0]} 
+					console.log('in /comment',data);
+					res.json(data[0])
+				})
+				.catch(err => res.status(400).json("cant insert"))
+		})
+		.catch(err => res.status(400).json("cant get the username"));
 })
 
 app.get('/allComment/:postid',(req,res)=>{
-	const postid = req.params;
-
+	const {postid} = req.params;
 	db('comments AS c')
   		.join('post_details AS p', (joinBuilder) => {
     		return joinBuilder.on('p.id', '=', 'c.postid').andOn('c.postid', '=', db.raw('?', [postid]));

@@ -11,8 +11,7 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 	const [l,setLikes] = useState(likes);
 	const [liked, setLiked] = useState(0);
 	const location = useLocation();
-	const [comment_details,setCommentDetails] = useState([]);
-	const [err,setError] = useState('');
+	const [commentList, setCommentList] = useState([]);
 
 	useEffect(() => {
 		const delBtn = document.querySelector('.right-post-header');
@@ -20,12 +19,13 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 		if(location.pathname === '/box/showPost'){
 			delBtn.classList.add('show-right-post-header');
 		}
-		// fetch(`http://localhost:3001/allComment/${id}`)
-  //   	.then((res)=>res.json())
-  //   	.then(data => {
-  //   		console.log(`data:${id}`,data);
-  //   		setCommentDetails(data);
-  //   	})
+
+		fetch(`http://localhost:3001/allComment/${id}`)
+	    .then((res)=>res.json())
+	    .then((data)=>{
+	      console.log("all commentList",data);
+	      setCommentList(data);
+	    });
 	})
 
 	const delPost = () => {
@@ -83,40 +83,8 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 		}
 	}
 
-	const uploadComment = (event) => {
-		event.preventDefault();
-		const data = new FormData(event.target);
-		const comment = data.get('comment')
-		console.log("input comment",comment);
-
-		if(comment === ''){
-			setError('Empty');
-		}
-		else{
-			fetch('http://localhost:3001/comment',{
-				method:'put',
-        		headers:{'Content-Type':'application/json'},
-        		body: JSON.stringify({
-        			postid:id,
-        			userid,
-        			comment
-        		})
-			})
-			.then(res => res.json())
-			.then(comments => {
-				if(comments.id){
-					comments = {...comments,username:username};
-					const postComments = comment_details;
-					postComments.push(comments);
-					console.log(postComments);
-					setCommentDetails(postComments);
-				}
-				else{
-					console.log('try again');
-					setError('try again');
-				}
-			})
-		}	
+	const updateComment = (newComment) => {
+		setCommentList(commentList.concat(newComment));
 	}
 
 	return(
@@ -151,30 +119,12 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 				</div>
 				{(l!==0) && <p>{`${l} likes`}</p>}
 				<p><strong>{username}</strong>{ caption}</p>
-				<div>
-				{
-					(comment_details.length !== 0) && (comment_details.map(cmntObj =>{
-						console.log('cmnt',cmntObj);
-						return (
-							<Comment key = {cmntObj.id}
-									 id = {cmntObj.id}
-								     parent_id = {cmntObj.parent_id}
-									 cmnt = {cmntObj.comment}
-									 postid = {cmntObj.postid}
-						 			 username={cmntObj.username}/>
-						);
-					}))
-
-				}
-				</div>
 			</div>
-			<div className="new-comment-section">
-				<form className="nc-form" onSubmit={uploadComment}>
-					<input placeholder ="add a comment" type="text" className="comment-ip" name="comment"/>
-					<input className="post-btn" type="submit" value="post"/>
-				</form>
-			</div>
-			{(err !== '') && <p style={{color:"red"}}> {`${err} !!!`} </p>}
+			<Comment username={username}
+					 postid = {id}
+					 userid = {userid}
+					 updateComment = {updateComment}
+					 commentList = {commentList}/>
 		</div>
 	)
 }
