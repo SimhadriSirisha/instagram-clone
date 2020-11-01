@@ -1,10 +1,19 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import './SingleComment.css';
+import {useLocation} from 'react-router-dom';
 
-const SingleComment = ({commentData, username, updateComment, userid}) =>{
+const SingleComment = ({commentData, updateComment, userid, replyto}) =>{
 	const [reply,setReply]=useState('');
 	const [openReply, setOpenReply] = useState(false);
+	const [showCommentAvatar, setShowCommentAvatar] = useState(false);
+	const location = useLocation();
+
+	useEffect(() => {
+		if(location.pathname === '/box/comments'){
+			setShowCommentAvatar(true);		
+		}
+	})
 
 	const open_reply = () =>{
 		setOpenReply(!openReply);
@@ -12,7 +21,6 @@ const SingleComment = ({commentData, username, updateComment, userid}) =>{
 
 	const onSubmit = (e) =>{
 		e.preventDefault();
-		console.log("reply:", reply);
 		fetch('http://localhost:3001/comment',{
 				method:'put',
         		headers:{'Content-Type':'application/json'},
@@ -38,19 +46,21 @@ const SingleComment = ({commentData, username, updateComment, userid}) =>{
 
 	return (
 		<div>
-			{console.log(commentData)}
-
 			<div className="comment-blk">
-				<div style = {{paddingLeft:"0.5rem"}}>
-					<Avatar src='#'
-							alt = {username}/>
-				</div>
+				{
+					(showCommentAvatar) &&  <div style = {{paddingLeft:"0.5rem"}}>
+												<Avatar src='#'
+														alt = {commentData.username}/>
+											</div>
+				}
 				<div className="right-comment-blk">
 					<div className="upper">
-						<h4>{username}</h4>
-						<p> {commentData.comment} </p>
-					</div>
-					<button className="post-btn" onClick={open_reply}> reply </button>
+						<h4>{commentData.username}</h4>
+						{
+							(replyto !== undefined)?<p className="comment-Data"><span style={{color:"violet"}}>{replyto}</span> {commentData.comment} </p>:<p className="comment-Data"> {commentData.comment} </p>
+						}
+					</div> 
+					{(showCommentAvatar) &&  <button className="post-btn" onClick={open_reply}> reply </button>}
 				</div>
 			</div>
 			<div className="new-comment-section">

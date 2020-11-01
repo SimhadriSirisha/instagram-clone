@@ -22,23 +22,29 @@ const App = (props) =>{
     bio:'yzaaa'
   });
   const [postDetails, setPostDetails] = useState([]);
+  const [likedPosts, setLikedPosts] = useState([]);
 
   useEffect(()=>{
-    console.log('inuseeffect',postDetails)
     fetch('http://localhost:3001/allPost')
     .then((res)=>res.json())
     .then((data)=>{
-      console.log("in allPost",data);
       setPostDetails(data)
     });
-  },[])
+  })
+
+  useEffect(()=>{
+    fetch(`http://localhost:3001/allLikes/${user.user_id}`)
+      .then((res)=>res.json())
+      .then((data)=>{
+        setLikedPosts(data)
+      });    
+  },[user.user_id])
 
   const loadPost = (post) =>{
     const p = postDetails;
     p.unshift(post);
     setPostDetails(p);
     setUser({...user, no_of_posts: post.no_of_posts});
-    console.log("loaded post details",postDetails);
   }
 
   const loadUser = (res_user) =>{
@@ -54,7 +60,6 @@ const App = (props) =>{
         bio,
         email
       })
-      console.log('loaded user',user);
   }
 
   const loadEditedUser = (res_user) =>{
@@ -67,18 +72,15 @@ const App = (props) =>{
         bio,
         email
       })
-      console.log('loaded user',user);
   }
 
   const loadLikes = (data) =>{
-    console.log("likes data",data);
     const p = postDetails;
     p.forEach((post) =>{
       if(post.id === data.id){
         post.likes = data.likes;
       }
     })
-    console.log(p);
     setPostDetails(p);
   }
 
@@ -99,7 +101,9 @@ const App = (props) =>{
                     user_id = {user.user_id}/>
             <Posts postDetails = {postDetails}
                    loadLikes = {loadLikes}
-                   userid = {user.user_id}/>
+                   userid = {user.user_id}
+                   username={user.username}
+                   likedPosts = {likedPosts}/>
           </Route>
           <Route exact path="/profile/:id">
             <Navbar username={user.username}

@@ -21,7 +21,7 @@ app.use(cors());
 
 db.schema.hasTable('comments').then((exists) => {
   if (!exists) {
-  	console.log("not present");
+  	console.log("comments table not present");
     return db.schema.createTable('comments', (t) => {
       t.increments('id').primary();
       t.integer('parent_id').defaultTo(0);
@@ -29,6 +29,20 @@ db.schema.hasTable('comments').then((exists) => {
       t.integer('userid').notNullable();
       t.integer('postid').notNullable();
       t.timestamp('createdAt');
+      t.foreign('postid').references('postid').inTable('post_details')
+      	.onUpdate('CASCADE')
+      	.onDelete('CASCADE');
+    });
+  }
+});
+
+db.schema.hasTable('likes').then((exists) => {
+  if (!exists) {
+  	console.log("likes table not present");
+    return db.schema.createTable('likes', (t) => {
+      t.increments('id').primary();
+      t.integer('userid').notNullable();
+      t.integer('postid').notNullable();
       t.foreign('postid').references('postid').inTable('post_details')
       	.onUpdate('CASCADE')
       	.onDelete('CASCADE');
@@ -153,6 +167,19 @@ app.post('/editProfile',(req,res)=>{
 		.catch(err => res.status(400).json('unable to update the profile'))
 })
 
+app.get('/allLikes/:userid',(req,res)=>{
+	const {userid} = req.params;
+	db('likes').select('postid')
+			   .where('userid','=',userid)
+			   .then(data => {
+			   		const postIds = data.map((obj)=>{
+			   			return obj.postid;
+			   		}) 
+			   		res.json(postIds);
+			   })
+			   .catch(err => res.status(400).json(err));
+})
+
 app.put('/likes',(req,res)=>{
 	const {userid,postid} = req.body;
 	db.transaction(trx=>{
@@ -217,11 +244,9 @@ app.put('/unlike',(req,res)=>{
 
 app.put('/comment',(req,res)=>{
 	const {comment,userid,postid,parent_id} = req.body;
-	console.log(req.body);
 	db('users').where('id','=',userid)
 		.select('username')
 		.then(uname => {
-			console.log('uname',uname);
 			return db('comments').insert({
 						comment,
 						userid,
@@ -231,7 +256,6 @@ app.put('/comment',(req,res)=>{
 				}).returning('*')
 				.then(data =>{
 					data[0] = {...data[0],...uname[0]} 
-					console.log('in /comment',data);
 					res.json(data[0])
 				})
 				.catch(err => res.status(400).json("cant insert"))
@@ -248,10 +272,17 @@ app.get('/allComment/:postid',(req,res)=>{
   	.join('users AS u', 'u.id', '=', 'c.userid')
   	.select(['c.id', 'c.parent_id', 'c.comment', 'u.username', 'c.postid', 'c.userid'])
   	.then((data) => {
- 	   	console.log(data);
     	res.json(data);
   	})
   	.catch(console.log);
+})
+
+app.delete('/delete',(req,res)=>{
+	const {postid} = req.body;
+	db('post_details').where('postid','=',postid)
+				.del()
+				.then(res.json('success'))
+				.catch(res.status(400).json('unable to delete'))
 })
 
 app.listen(3001,()=>{

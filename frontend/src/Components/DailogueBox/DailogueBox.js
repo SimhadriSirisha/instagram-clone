@@ -3,6 +3,7 @@ import './DailogueBox.css';
 import { useHistory, useLocation } from "react-router-dom";
 import CloseIcon from '@material-ui/icons/Close';
 import Post from '../Post/Post';
+import ShowComments from '../Comment/ShowComments';
 
 const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
   const [caption,setCaption] = useState('');
@@ -10,6 +11,8 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
   const [loading,setLoading] = useState(false);
   const [click, setClick] = useState(true);
   const [url,setUrl] = useState('');
+  const [showAllComment,setShowAllComment] = useState(false);
+  const [delFailed,setDelFailed] = useState(false);
   const [userPost,setPost]  = useState({
     id:0,
     username:'',
@@ -18,9 +21,23 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
     likes:0,
     userid:0
   });
+  const [comment_details,setCommentDetails] = useState({
+    commentList:[],
+    userid:0, 
+    postid:0,
+    username:'',
+    comment_uname:''
+  })
 
   let history = useHistory();
   let location = useLocation();
+
+  const updateComment2 = (newComment) => {
+    let cmnts = comment_details.commentList;
+    console.log('cmnts',cmnts);
+    cmnts = cmnts.concat(newComment);
+    setCommentDetails({...comment_details, commentList:cmnts}) 
+  }
 
   useEffect(()=>{
     const container = document.querySelector('.overlay');
@@ -30,7 +47,6 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
     upload_block.classList.remove('showBlock');
     show_post_block.classList.remove('showBlock');
 
-    console.log("click",click);
     if(click === true){
       container.classList.add('open-overlay');
     }
@@ -39,19 +55,21 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
     }
 
     if (location.pathname === '/box') {
-      console.log('box location');
       upload_block.classList.add('showBlock');
+    }
+    else if(location.pathname === '/box/comments'){
+      setCommentDetails(history.location.state);
+      setShowAllComment(true);
+      overlay_container.classList.add('post-overlay-container');
     }
     else{
       setPost(location.state.post)
-      console.log('show_post location');
       show_post_block.classList.add('showBlock');
       overlay_container.classList.add('post-overlay-container');
     }
   },[click]);
 
   const postUpload = () =>{
-    console.log('got url',url);
       fetch('http://localhost:3001/upload',{
         method:'post',
         headers:{'Content-Type':'application/json'},
@@ -64,7 +82,6 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
         .then(res => res.json())
         .then(post => {
           if(post){
-            console.log("successs");
             loadPost(post);
             setLoading(false);
             setClick(false);
@@ -84,9 +101,12 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
         history.goBack();
   }
 
+  const deleteFailed = () => {
+    setDelFailed(true);
+  }
+
   const onSubmitUpload = (e) =>{
     e.preventDefault();
-    console.log("clicked");
     setLoading(true);
     const data = new FormData();
     data.append("file",image);
@@ -99,7 +119,6 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
         .then(res => res.json())
         .then(file => {
           setUrl(file.secure_url);
-          console.log(file.secure_url);
         })
         .catch(err => console.log("unable to load image"));
   }
@@ -131,8 +150,22 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
                   caption = {userPost.caption}
                   likes = {userPost.likes}
                   loadLikes = {loadLikes}
-                  userid = {userPost.userid}/>
+                  userid = {userPost.userid}
+                  closeUpload = {closeUpload}
+                  deleteFailed = {deleteFailed}/>
+            {(delFailed) && <p style={{color:"red"}}> unable to delete </p> }
           </div>
+           <div className="comment_blk">
+            { console.log("after set:", comment_details.commentList)}
+              {
+                (showAllComment) && <ShowComments  userid={comment_details.userid}
+                                           postid={comment_details.postid}
+                                           username={comment_details.username}
+                                           updateComment={updateComment2}
+                                           commentList={comment_details.commentList}
+                                           comment_uname={comment_details.comment_uname}/>
+              }
+           </div>
       </div>
     </div>
   )

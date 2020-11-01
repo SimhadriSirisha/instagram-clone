@@ -6,12 +6,15 @@ import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import './Post.css';
 import {useLocation} from 'react-router-dom';
 import Comment from '../Comment/Comment';
+import { useHistory } from "react-router-dom";
 
-const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
+const Post = ({username,imageUrl,caption,likes,id,likedPosts,loadLikes,userid,comment_uname,closeUpload,deleteFailed}) =>{
 	const [l,setLikes] = useState(likes);
-	const [liked, setLiked] = useState(0);
+	const [liked, setLiked] = useState(false);
 	const location = useLocation();
 	const [commentList, setCommentList] = useState([]);
+	const [count, setCount] = useState(0);
+	const history = useHistory();
 
 	useEffect(() => {
 		const delBtn = document.querySelector('.right-post-header');
@@ -20,20 +23,49 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 			delBtn.classList.add('show-right-post-header');
 		}
 
+		if(likedPosts && likedPosts.includes(id)){
+			setLiked(true);
+		}
+
 		fetch(`http://localhost:3001/allComment/${id}`)
 	    .then((res)=>res.json())
 	    .then((data)=>{
-	      console.log("all commentList",data);
 	      setCommentList(data);
+	      setCount(data.length);
 	    });
 	})
 
 	const delPost = () => {
-		
+		fetch('http://localhost:3001/delete',{
+			method:'delete',
+        	headers:{'Content-Type':'application/json'},
+	        body: JSON.stringify({postid:id})
+		})
+		.then((res)=>res.json())
+		.then((result)=>{
+			if(result === 'success'){
+				closeUpload();
+			}
+			else{
+				deleteFailed();
+			}
+		})
+	}
+
+	const viewComments2 = () =>{
+		history.push({
+			pathname:'/box/comments',
+			state:{
+				commentList:commentList,
+				userid:userid,
+				postid:id, 
+				username: username,
+				comment_uname
+			}
+		})
 	}
 
 	const updateLikes = () =>{
-		console.log("doubleClicked")
 		fetch('http://localhost:3001/likes',{
         	method:'put',
         	headers:{'Content-Type':'application/json'},
@@ -50,14 +82,13 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
         	else{
         		loadLikes({likes,id});
         		setLikes(likes);
-        		setLiked(1);
+        		setLiked(true);
         	}
         })
 	} 
 
 	const updateLikesUnlikes = () =>{
 		if(liked){
-			console.log('un-liking');
 			fetch('http://localhost:3001/unlike',{
 				method:'put',
         		headers:{'Content-Type':'application/json'},
@@ -73,7 +104,7 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
         		else{
         			loadLikes({likes,id});
         			setLikes(likes);
-        			setLiked(0);
+        			setLiked(false);
         		}
 			})
 		}
@@ -85,6 +116,7 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 
 	const updateComment = (newComment) => {
 		setCommentList(commentList.concat(newComment));
+		setCount(count+1);
 	}
 
 	return(
@@ -113,7 +145,7 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 									<FavoriteBorderSharpIcon onClick={updateLikesUnlikes}/>
 						}
 					</button>
-					<button className="post_icon_btn">
+					<button className="post_icon_btn" onClick={viewComments2}>
 						<ModeCommentOutlinedIcon />
 					</button>
 				</div>
@@ -124,7 +156,9 @@ const Post = ({username,imageUrl,caption,likes,id,loadLikes,userid}) =>{
 					 postid = {id}
 					 userid = {userid}
 					 updateComment = {updateComment}
-					 commentList = {commentList}/>
+					 commentList = {commentList}
+					 comment_uname = {comment_uname}
+					 count = {count}/>
 		</div>
 	)
 }

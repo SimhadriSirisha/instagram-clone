@@ -7,7 +7,7 @@
 	border-left: none;
 	border-bottom: none; 
 	outline: transparent;
-	padding:0.5rem 0 0 0.3rem;
+	padding:0.5rem 0 0 0.8rem;
 }
 
 .post-btn{
@@ -23,4 +23,16 @@
 	border-bottom: none;
 	outline: transparent;
 	cursor: pointer;
+}
+
+.view-btn{
+	display: flex;
+	align-items: flex-start;
+	border: none;
+	background: transparent;
+	outline: transparent;
+	cursor: pointer;
+	padding-left: 0.8rem;
+	padding-bottom: 0.5rem;
+	color: grey;
 }

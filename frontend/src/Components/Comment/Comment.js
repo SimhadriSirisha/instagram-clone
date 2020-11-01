@@ -1,12 +1,35 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import './Comment.css';
-import SingleComment from './SingleComment';
-import ReplyComment from './ReplyComment';
+import ShowComments from './ShowComments';
+import { useHistory } from "react-router-dom";
 
-const Comment = ({userid,postid,username,updateComment,commentList}) =>{
+const Comment = ({userid,postid,username,updateComment,commentList,comment_uname, count}) =>{
 	const [comment,setComment] = useState('');
 	const [err,setError] = useState('');
+	const [showComment, setShowComments] = useState(true);
+	const [showView,setShowView] = useState(false);
+	const history = useHistory();
+
+	useEffect(() => {
+		if(count > 3){
+			setShowView(true);
+			setShowComments(false);
+		}
+	})
 	
+	const viewComments = () =>{
+		history.push({
+			pathname:'/box/comments',
+			state:{
+				commentList:commentList,
+				userid:userid,
+				postid:postid, 
+				username: username,
+				comment_uname
+			}
+		})
+	}
+
 	const uploadComment = (event) => {
 		event.preventDefault();
 
@@ -30,7 +53,6 @@ const Comment = ({userid,postid,username,updateComment,commentList}) =>{
 					updateComment(comments);
 				}
 				else{
-					console.log('try again');
 					setError('try again');
 				}
 			})
@@ -38,27 +60,15 @@ const Comment = ({userid,postid,username,updateComment,commentList}) =>{
 	}
 
 	return (
-		<div> 
-			{commentList && commentList.map((commentData,idx) =>{
-					if(commentData.parent_id === 0){
-						return(
-							<div>
-							<SingleComment key={idx}
-										   commentData={commentData}
-										   username = {username}
-										   updateComment = {updateComment}
-										   userid = {userid}/>
-							<ReplyComment key={idx}
-										  prev_comment_id = {commentData.id}
-										  username = {username}
-										  updateComment = {updateComment}
-										  userid = {userid}
-										  commentList = {commentList}
-										  replyto = {commentData.username}/>
-							</div>
-						)
-					}
-				})
+		<div>
+			{(showView) && <button onClick={viewComments} className="view-btn">{`view all ${count} comments`}</button>}
+			{
+				(showComment) && <ShowComments  userid={userid}
+							   postid={postid}
+							   username={username}
+							   updateComment={updateComment}
+							   commentList={commentList}
+							   comment_uname={comment_uname}/>
 			}
 			<div className="new-comment-section">
 				<form className="nc-form" onSubmit={uploadComment}>
