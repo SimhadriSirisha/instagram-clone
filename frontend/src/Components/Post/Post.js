@@ -8,7 +8,7 @@ import {useLocation} from 'react-router-dom';
 import Comment from '../Comment/Comment';
 import { useHistory } from "react-router-dom";
 
-const Post = ({username,imageUrl,caption,likes,id,likedPosts,loadLikes,userid,comment_uname,closeUpload,deleteFailed}) =>{
+const Post = ({username,imageUrl,caption,likes,id,likedPosts,loadLikes,userid,comment_uname,goHome,deleteFailed,loadNoOfPosts}) =>{
 	const [l,setLikes] = useState(likes);
 	const [liked, setLiked] = useState(false);
 	const location = useLocation();
@@ -39,12 +39,16 @@ const Post = ({username,imageUrl,caption,likes,id,likedPosts,loadLikes,userid,co
 		fetch('http://localhost:3001/delete',{
 			method:'delete',
         	headers:{'Content-Type':'application/json'},
-	        body: JSON.stringify({postid:id})
+	        body: JSON.stringify({
+	        	postid:id,
+	        	userid:userid
+	        })
 		})
 		.then((res)=>res.json())
-		.then((result)=>{
-			if(result === 'success'){
-				closeUpload();
+		.then((n)=>{
+			if(n>=0){
+				loadNoOfPosts(n);
+				goHome();
 			}
 			else{
 				deleteFailed();

@@ -21,7 +21,6 @@ app.use(cors());
 
 db.schema.hasTable('comments').then((exists) => {
   if (!exists) {
-  	console.log("comments table not present");
     return db.schema.createTable('comments', (t) => {
       t.increments('id').primary();
       t.integer('parent_id').defaultTo(0);
@@ -38,7 +37,6 @@ db.schema.hasTable('comments').then((exists) => {
 
 db.schema.hasTable('likes').then((exists) => {
   if (!exists) {
-  	console.log("likes table not present");
     return db.schema.createTable('likes', (t) => {
       t.increments('id').primary();
       t.integer('userid').notNullable();
@@ -96,7 +94,6 @@ app.post('/signup',(req,res)=>{
 	.then(user => {
 		user.password = undefined;
 		res.json(user[0]);
-		console.log(user[0]);
 	})
 	.catch(err => {res.status(400).json('unable to register')});
 })
@@ -188,9 +185,7 @@ app.put('/likes',(req,res)=>{
 			userid
 		})
 		.then(data => {
-			console.log('data',data);
 			if(data.length){
-				console.log("user already liked the post");
 				return trx('post_details').select('likes')
 							.where('id','=',data[0].postid)
 							.then(likes => {
@@ -205,7 +200,6 @@ app.put('/likes',(req,res)=>{
 				}).into('likes')
 				.returning('postid')
 				.then(postId =>{
-					console.log('postid',postId);
 					return trx('post_details')
 								.where('id','=',postId[0])
 								.increment('likes')
@@ -274,15 +268,39 @@ app.get('/allComment/:postid',(req,res)=>{
   	.then((data) => {
     	res.json(data);
   	})
-  	.catch(console.log);
+  	.catch(err =>  res.status(400).json('unable to fetch'));
 })
 
 app.delete('/delete',(req,res)=>{
-	const {postid} = req.body;
-	db('post_details').where('postid','=',postid)
-				.del()
-				.then(res.json('success'))
-				.catch(res.status(400).json('unable to delete'))
+	const {postid,userid} = req.body;
+	db.transaction(trx => {
+		trx('likes').where('postid',postid)
+			.del()
+			.then(()=>{
+				return trx('comments').where('postid',postid)
+						.del()
+						.then(()=>{
+							return trx('post_details')
+									.where('id',postid)
+									.del()
+									.then(()=>{
+										return db('users').decrement('no_of_posts')
+													.where('id',userid)
+													.returning('no_of_posts')
+													.then((data)=>{
+														res.json(data[0])
+													})
+													.catch(err => res.status(400).json('unable to decrement'))
+									})
+									.then(trx.commit)
+									.catch(trx.rollback)
+						})
+						.then(trx.commit)
+						.catch(trx.rollback)
+			})
+			.catch(err => res.status(400).json('unable to del likes data'))
+	})
+	
 })
 
 app.listen(3001,()=>{

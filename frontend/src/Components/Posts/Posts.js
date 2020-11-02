@@ -2,7 +2,6 @@ import React from 'react';
 import Post from '../Post/Post';
 
 const Posts = ({postDetails,loadLikes,userid,username,likedPosts}) =>{
-  console.log(postDetails);
 	return(
 		<div>
 		{

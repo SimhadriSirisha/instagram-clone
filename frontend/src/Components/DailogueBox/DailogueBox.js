@@ -5,7 +5,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Post from '../Post/Post';
 import ShowComments from '../Comment/ShowComments';
 
-const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
+const DailogueBox = ({user_id, loadPost, loadLikes, loadNoOfPosts}) =>{
   const [caption,setCaption] = useState('');
   const [image,setImage] = useState('');
   const [loading,setLoading] = useState(false);
@@ -34,7 +34,6 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
 
   const updateComment2 = (newComment) => {
     let cmnts = comment_details.commentList;
-    console.log('cmnts',cmnts);
     cmnts = cmnts.concat(newComment);
     setCommentDetails({...comment_details, commentList:cmnts}) 
   }
@@ -69,6 +68,11 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
     }
   },[click]);
 
+  const goHome = () =>{
+    setClick(false);
+    history.push('/home');
+  }
+
   const postUpload = () =>{
       fetch('http://localhost:3001/upload',{
         method:'post',
@@ -84,8 +88,7 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
           if(post){
             loadPost(post);
             setLoading(false);
-            setClick(false);
-            history.push('/home');
+            goHome();
           }
       })
   }
@@ -151,12 +154,12 @@ const DailogueBox = ({user_id, loadPost, loadLikes}) =>{
                   likes = {userPost.likes}
                   loadLikes = {loadLikes}
                   userid = {userPost.userid}
-                  closeUpload = {closeUpload}
-                  deleteFailed = {deleteFailed}/>
+                  goHome = {goHome}
+                  deleteFailed = {deleteFailed}
+                  loadNoOfPosts = {loadNoOfPosts}/>
             {(delFailed) && <p style={{color:"red"}}> unable to delete </p> }
           </div>
            <div className="comment_blk">
-            { console.log("after set:", comment_details.commentList)}
               {
                 (showAllComment) && <ShowComments  userid={comment_details.userid}
                                            postid={comment_details.postid}

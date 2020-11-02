@@ -40,11 +40,16 @@ const App = (props) =>{
       });    
   },[user.user_id])
 
+  const loadNoOfPosts = (n) =>{
+    setUser({...user, no_of_posts: n});
+  }
+
   const loadPost = (post) =>{
     const p = postDetails;
     p.unshift(post);
     setPostDetails(p);
-    setUser({...user, no_of_posts: post.no_of_posts});
+    loadNoOfPosts(post.no_of_posts);
+    // setUser({...user, no_of_posts: post.no_of_posts});
   }
 
   const loadUser = (res_user) =>{
@@ -120,7 +125,8 @@ const App = (props) =>{
             <DailogueBox 
                  user_id = {user.user_id}
                  loadPost = {loadPost} 
-                 loadLikes = {loadLikes}/>
+                 loadLikes = {loadLikes}
+                 loadNoOfPosts = {loadNoOfPosts}/>
           </Route>
         </Switch>
       </div>
